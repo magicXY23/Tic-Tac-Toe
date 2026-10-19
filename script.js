@@ -102,10 +102,14 @@ function checks() {
 
         if (a && a === b && b === c) {
             drawWinLine(condition[0], condition[1], condition[4], condition[5]);
-            msg2.textContent = 'Player ' + currentPlayer + ' won! Refresh the page to play again.';
+            msg2.textContent = 'Player ' + currentPlayer + ' wins! Refresh the page to play again!';
             gameOver = true;
             return;
         }
+    }
+    if (gameState.flat().every(cell => cell !== '')) {
+        msg2.textContent = 'It\'s a tie! Refresh the page to play again!';
+        gameOver = true;
     }
 }
 
