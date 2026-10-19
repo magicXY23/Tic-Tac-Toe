@@ -65,8 +65,27 @@ function drawXO(row, col) {
     }
 }
 
+const winConditions = [
+    [0, 0, 0, 1, 0, 2], [1, 0, 1, 1, 1, 2], [2, 0, 2, 1, 2, 2],
+    [0, 0, 1, 0, 2, 0], [0, 1, 1, 1, 2, 1], [0, 2, 1, 2, 2, 2],
+    [0, 0, 1, 1, 2, 2], [0, 2, 1, 1, 2, 0]
+];
+
 function checks() {
+    for(let condition of winConditions) {
+        let a = gameState[condition[0]][condition[1]];
+        let b = gameState[condition[2]][condition[3]];
+        let c = gameState[condition[4]][condition[5]];
+
+        if (a && a === b && b === c) {
+            msg2.textContent = 'Player ' + currentPlayer + ' won! Refresh the page to play again.';
+            gameOver = true;
+            return;
+        }
+    }
 }
+
+drawBoard();
 
 board.addEventListener('click', function(event) {
     if (gameOver) return;
@@ -80,10 +99,8 @@ board.addEventListener('click', function(event) {
 
     if (gameState[row][col] === '') {
         gameState[row][col] = currentPlayer;
-        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
         drawXO(row, col);
         checks();
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     }
 });
-
-drawBoard();
