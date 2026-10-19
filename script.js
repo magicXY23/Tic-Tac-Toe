@@ -14,12 +14,17 @@ if (board.width > board.height) {
 else {
     board.height = board.width;
 }
-
-console.log(totalOffsetHeight);
-console.log(window.innerWidth, window.innerHeight);
-console.log(board.width, board.height);
-
 const cellSize = (board.width-10) / 3;
+
+let gameState = [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', '']
+];
+let currentPlayer = 'X';
+let gameOver = false;
+
+msg2.textContent = 'Current player: ' + currentPlayer;
 
 function drawBoard() {
     ctx.clearRect(0, 0, board.width, board.height);
@@ -38,4 +43,28 @@ function drawBoard() {
     ctx.lineTo(board.width, 2*cellSize+5+2.5);
     ctx.stroke();
 }
+
+// function drawXO() {
+// }
+
+// function checks() {
+// }
+
+board.addEventListener('click', function(event) {
+    if (gameOver) return;
+
+    const square = board.getBoundingClientRect();
+    const x = event.clientX - square.left;
+    const y = event.clientY - square.top;
+
+    const row = Math.floor(y / (cellSize + 5));
+    const col = Math.floor(x / (cellSize + 5));
+
+    if (gameState[row][col] === '') {
+        gameState[row][col] = currentPlayer;
+        drawXO();
+        checks();
+    }
+});
+
 drawBoard();
