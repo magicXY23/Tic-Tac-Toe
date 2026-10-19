@@ -5,16 +5,17 @@ const title = document.querySelector('h1');
 const msg1 = document.getElementById('msg1');
 const msg2 = document.getElementById('msg2');
 const totalOffsetHeight = title.offsetHeight + msg1.offsetHeight + msg2.offsetHeight + 40;
+const gridLineWidth = 5;
 
-board.width = Math.floor((window.innerWidth*0.8 - 10)/3)*3 + 10;
-board.height = Math.floor((window.innerHeight*0.8 - 10 - totalOffsetHeight)/3)*3 + 10;
+board.width = Math.floor((window.innerWidth*0.8 - 2*gridLineWidth)/3)*3 + 10;
+board.height = Math.floor((window.innerHeight*0.8 - 2*gridLineWidth - totalOffsetHeight)/3)*3 + 10;
 if (board.width > board.height) {
     board.width = board.height;
 }
 else {
     board.height = board.width;
 }
-const cellSize = (board.width-10) / 3;
+const cellSize = (board.width - 2*gridLineWidth)/3;
 
 let gameState = [
     ['', '', ''],
@@ -28,27 +29,44 @@ msg2.textContent = 'Current player: ' + currentPlayer;
 
 function drawBoard() {
     ctx.clearRect(0, 0, board.width, board.height);
-    ctx.lineWidth = 5;
+    ctx.lineWidth = gridLineWidth;
     ctx.strokeStyle = 'White';
 
     ctx.beginPath();
-    ctx.moveTo(cellSize+2.5, 0);
-    ctx.lineTo(cellSize+2.5, board.height);
-    ctx.moveTo(2*cellSize+5+2.5, 0);
-    ctx.lineTo(2*cellSize+5+2.5, board.height);
+    ctx.moveTo(cellSize + gridLineWidth/2, 0);
+    ctx.lineTo(cellSize + gridLineWidth/2, board.height);
+    ctx.moveTo(2*cellSize + gridLineWidth + gridLineWidth/2, 0);
+    ctx.lineTo(2*cellSize + gridLineWidth + gridLineWidth/2, board.height);
 
-    ctx.moveTo(0, cellSize+2.5);
-    ctx.lineTo(board.width, cellSize+2.5);
-    ctx.moveTo(0, 2*cellSize+5+2.5);
-    ctx.lineTo(board.width, 2*cellSize+5+2.5);
+    ctx.moveTo(0, cellSize + gridLineWidth/2);
+    ctx.lineTo(board.width, cellSize + gridLineWidth/2);
+    ctx.moveTo(0, 2*cellSize + gridLineWidth + gridLineWidth/2);
+    ctx.lineTo(board.width, 2*cellSize + gridLineWidth + gridLineWidth/2);
     ctx.stroke();
 }
 
-// function drawXO() {
-// }
+function drawXO(row, col) {
+    ctx.lineWidth = 10;
+    if (gameState[row][col] === 'X') {
+        ctx.strokeStyle = 'LightCoral';
+        ctx.beginPath();
+        ctx.moveTo(col*(cellSize + gridLineWidth) + ctx.lineWidth/2, row*(cellSize + gridLineWidth) + ctx.lineWidth/2);
+        ctx.lineTo((col + 1)*cellSize + col*gridLineWidth - ctx.lineWidth/2, (row + 1)*cellSize + row*gridLineWidth - ctx.lineWidth/2);
 
-// function checks() {
-// }
+        ctx.moveTo((col + 1)*cellSize + col*gridLineWidth - ctx.lineWidth/2, row*(cellSize + gridLineWidth) + ctx.lineWidth/2);
+        ctx.lineTo(col*(cellSize + gridLineWidth) + ctx.lineWidth/2, (row + 1)*cellSize + row*gridLineWidth - ctx.lineWidth/2);
+        ctx.stroke();
+    }
+    else if (gameState[row][col] === 'O') {
+        ctx.strokeStyle = 'LightSkyBlue';
+        ctx.beginPath();
+        ctx.arc(col*(cellSize + gridLineWidth) + cellSize/2, row*(cellSize + gridLineWidth) + cellSize/2, cellSize/2 - ctx.lineWidth/2, 0, Math.PI*2);
+        ctx.stroke();
+    }
+}
+
+function checks() {
+}
 
 board.addEventListener('click', function(event) {
     if (gameOver) return;
@@ -57,12 +75,13 @@ board.addEventListener('click', function(event) {
     const x = event.clientX - square.left;
     const y = event.clientY - square.top;
 
-    const row = Math.floor(y / (cellSize + 5));
-    const col = Math.floor(x / (cellSize + 5));
+    const row = Math.floor(y/(cellSize + gridLineWidth));
+    const col = Math.floor(x/(cellSize + gridLineWidth));
 
     if (gameState[row][col] === '') {
         gameState[row][col] = currentPlayer;
-        drawXO();
+        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        drawXO(row, col);
         checks();
     }
 });
