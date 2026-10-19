@@ -65,6 +65,29 @@ function drawXO(row, col) {
     }
 }
 
+function drawWinLine(row1, col1, row2, col2) {
+    ctx.strokeStyle = 'LightGreen';
+    ctx.lineWidth = 10;
+    ctx.beginPath();
+    if (row1 === row2) {
+        ctx.moveTo(col1*(cellSize + gridLineWidth), row1*(cellSize + gridLineWidth) + cellSize/2);
+        ctx.lineTo((col2 + 1)*(cellSize + gridLineWidth), row2*(cellSize + gridLineWidth) + cellSize/2);
+    }
+    else if (col1 === col2) {
+        ctx.moveTo(col1*(cellSize + gridLineWidth) + cellSize/2, row1*(cellSize + gridLineWidth));
+        ctx.lineTo(col2*(cellSize + gridLineWidth) + cellSize/2, (row2 + 1)*(cellSize + gridLineWidth));
+    }
+    else if (row1 < row2 && col1 < col2) {
+        ctx.moveTo(col1*(cellSize + gridLineWidth), row1*(cellSize + gridLineWidth));
+        ctx.lineTo((col2 + 1)*cellSize + col2*gridLineWidth, (row2 + 1)*cellSize + row2*gridLineWidth);
+    }
+    else if (row1 < row2 && col1 > col2) {
+        ctx.moveTo((col1 + 1)*cellSize + col1*gridLineWidth, row1*cellSize + row1*gridLineWidth);
+        ctx.lineTo(col2*(cellSize + gridLineWidth), (row2 + 1)*cellSize + row2*gridLineWidth);
+    }
+    ctx.stroke();
+}
+
 const winConditions = [
     [0, 0, 0, 1, 0, 2], [1, 0, 1, 1, 1, 2], [2, 0, 2, 1, 2, 2],
     [0, 0, 1, 0, 2, 0], [0, 1, 1, 1, 2, 1], [0, 2, 1, 2, 2, 2],
@@ -78,6 +101,7 @@ function checks() {
         let c = gameState[condition[4]][condition[5]];
 
         if (a && a === b && b === c) {
+            drawWinLine(condition[0], condition[1], condition[4], condition[5]);
             msg2.textContent = 'Player ' + currentPlayer + ' won! Refresh the page to play again.';
             gameOver = true;
             return;
